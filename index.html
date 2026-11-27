@@ -1,0 +1,217 @@
+<!doctype html>
+<!--
+Copyright 2026 himudx0-prog
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c12">
+  <meta name="description" content="A fast, responsive gaming dashboard for your next session.">
+  <title>Playroom — Your gaming space</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0c12;
+      --panel: #12141d;
+      --panel-raised: #191b27;
+      --text: #f5f5fb;
+      --muted: #9295a8;
+      --line: rgba(255,255,255,.075);
+      --purple: #a68bff;
+      --green: #b7f36b;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--text); background: var(--bg); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .app { display: grid; grid-template-columns: 230px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { display: flex; flex-direction: column; padding: 27px 17px 20px; border-right: 1px solid var(--line); background: #0e0f16; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 11px; margin-bottom: 42px; font-size: 19px; font-weight: 750; letter-spacing: -.7px; }
+    .brand-mark { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 10px; color: #141221; background: var(--purple); font-size: 17px; }
+    .section-label { padding: 0 12px; margin: 0 0 10px; color: #777a8d; font-size: 10px; font-weight: 750; letter-spacing: 1.5px; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav button { display: flex; align-items: center; gap: 13px; width: 100%; padding: 11px 12px; border: 0; border-radius: 9px; color: var(--muted); background: transparent; text-align: left; cursor: pointer; transition: background .16s ease, color .16s ease; }
+    .nav button:hover, .nav button.active { color: var(--text); background: var(--panel-raised); }
+    .nav button.active { box-shadow: inset 2px 0 var(--purple); }
+    .nav-icon { width: 18px; text-align: center; font-size: 16px; }
+    .side-spacer { flex: 1; min-height: 50px; }
+    .invite { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: linear-gradient(145deg, #1d1b2b, #12141d 75%); }
+    .invite strong { display: block; margin-bottom: 6px; font-size: 13px; }
+    .invite p { margin: 0 0 13px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .invite button { width: 100%; padding: 9px; border: 0; border-radius: 7px; color: #171323; background: var(--purple); font-size: 11px; font-weight: 750; cursor: pointer; }
+    main { min-width: 0; padding: 27px clamp(20px, 4vw, 58px) 55px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1260px; margin: 0 auto 34px; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .search { display: flex; align-items: center; gap: 9px; width: min(250px, 36vw); padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; color: var(--muted); background: var(--panel); }
+    .search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--text); background: transparent; font-size: 12px; }
+    .search input::placeholder { color: #777a8d; }
+    .icon-button { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); cursor: pointer; }
+    .avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #19151f; background: linear-gradient(135deg, #f8c5a5, #bb96ff); font-size: 12px; font-weight: 800; }
+    .content { max-width: 1260px; margin: 0 auto; }
+    .welcome { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin: 0 0 22px; }
+    .eyebrow { margin-bottom: 9px; color: var(--green); font-size: 10px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -1.7px; line-height: 1.1; }
+    .welcome p { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+    .online { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 30px; color: #c3c4ce; font-size: 11px; white-space: nowrap; }
+    .online-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px #b7f36b70; }
+    .hero { position: relative; display: flex; align-items: center; min-height: 255px; overflow: hidden; padding: clamp(24px, 5vw, 48px); border: 1px solid rgba(255,255,255,.09); border-radius: 18px; background: radial-gradient(ellipse at 78% 55%, #7860d566 0, transparent 32%), radial-gradient(ellipse at 95% 15%, #fa9d8b30 0, transparent 30%), linear-gradient(110deg, #211d37 0%, #171727 54%, #17131f 100%); }
+    .hero::after { position: absolute; top: -90px; right: 6%; width: 270px; height: 270px; border: 1px solid #ffffff12; border-radius: 50%; box-shadow: 0 0 0 35px #ffffff08, 0 0 0 70px #ffffff05; content: ""; pointer-events: none; }
+    .hero-copy { position: relative; z-index: 1; max-width: 470px; }
+    .hero-tag { display: inline-flex; gap: 7px; align-items: center; padding: 6px 9px; border: 1px solid #ffffff1b; border-radius: 20px; color: #ddd4ff; background: #ffffff0a; font-size: 9px; font-weight: 750; letter-spacing: 1px; text-transform: uppercase; }
+    .hero h2 { margin: 15px 0 9px; font-size: clamp(26px, 4vw, 38px); letter-spacing: -1.2px; }
+    .hero p { max-width: 355px; margin: 0; color: #b3b0c3; font-size: 12px; line-height: 1.7; }
+    .primary { display: inline-flex; align-items: center; gap: 9px; margin-top: 21px; padding: 11px 16px; border: 0; border-radius: 8px; color: #171323; background: var(--green); font-size: 11px; font-weight: 800; cursor: pointer; transition: transform .16s ease, filter .16s ease; }
+    .primary:hover { transform: translateY(-2px); filter: brightness(1.06); }
+    .hero-art { position: absolute; right: 13%; top: 50%; display: grid; place-items: center; width: 150px; height: 150px; border: 1px solid #ffffff25; border-radius: 38px; color: #fff; background: linear-gradient(145deg, #c0a3ff45, #a28bff0b); box-shadow: 0 20px 70px #0005, inset 0 1px #ffffff25; font-size: 66px; transform: translateY(-50%) rotate(9deg); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 34px 0 15px; }
+    .section-head h2 { margin: 0; font-size: 16px; letter-spacing: -.3px; }
+    .filters { display: flex; gap: 6px; }
+    .filter { padding: 7px 11px; border: 1px solid transparent; border-radius: 20px; color: var(--muted); background: transparent; font-size: 10px; cursor: pointer; }
+    .filter:hover { color: var(--text); }
+    .filter.active { border-color: var(--line); color: var(--text); background: var(--panel-raised); }
+    .games { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+    .game-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); transition: transform .18s ease, border-color .18s ease; }
+    .game-card:hover { transform: translateY(-3px); border-color: #ffffff25; }
+    .game-art { position: relative; display: grid; place-items: center; aspect-ratio: 1.55; overflow: hidden; font-size: 43px; }
+    .game-art::before, .game-art::after { position: absolute; border: 1px solid #ffffff1c; border-radius: 50%; content: ""; }
+    .game-art::before { width: 115px; height: 115px; }
+    .game-art::after { width: 160px; height: 160px; }
+    .game-art span { position: relative; z-index: 1; filter: drop-shadow(0 8px 12px #0007); }
+    .art-cyber { background: radial-gradient(circle at 50% 80%, #a34aaf99, transparent 42%), linear-gradient(135deg,#252148,#141721); }
+    .art-racing { background: radial-gradient(circle at 55% 70%, #e37b4680, transparent 40%), linear-gradient(135deg,#3b2528,#151720); }
+    .art-forest { background: radial-gradient(circle at 50% 75%, #64ad6590, transparent 40%), linear-gradient(135deg,#183d3b,#151720); }
+    .art-space { background: radial-gradient(circle at 50% 70%, #5983d499, transparent 40%), linear-gradient(135deg,#1d2c50,#151720); }
+    .game-info { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; }
+    .game-info h3 { overflow: hidden; margin: 0 0 5px; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .game-info p { margin: 0; color: var(--muted); font-size: 9px; }
+    .play-small { flex: 0 0 auto; width: 29px; height: 29px; border: 1px solid var(--line); border-radius: 8px; color: var(--green); background: #ffffff06; cursor: pointer; }
+    .play-small:hover { background: #b7f36b18; }
+    .empty { grid-column: 1 / -1; padding: 35px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); text-align: center; font-size: 12px; }
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 5; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: #20212b; box-shadow: 0 12px 38px #0007; font-size: 12px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; }
+    @media (max-width: 900px) { .app { grid-template-columns: 68px minmax(0,1fr); } .sidebar { align-items: center; padding-inline: 8px; } .brand { padding: 0; margin-bottom: 40px; } .brand-name, .section-label, .nav-label, .invite { display: none; } .nav { width: 100%; } .nav button { justify-content: center; padding: 12px 4px; } .nav-icon { font-size: 18px; } .games { grid-template-columns: repeat(2, minmax(0,1fr)); } .hero-art { right: 8%; width: 115px; height: 115px; font-size: 50px; } }
+    @media (max-width: 560px) { .app { display: block; padding-bottom: 65px; } .sidebar { position: fixed; z-index: 3; right: 0; bottom: 0; left: 0; display: block; height: 59px; padding: 5px 12px; border-top: 1px solid var(--line); border-right: 0; background: #101119f5; backdrop-filter: blur(12px); } .brand, .side-spacer { display: none; } .nav { display: flex; justify-content: space-around; } .nav button { flex-direction: column; gap: 3px; width: 62px; padding: 5px 0; font-size: 9px; } .nav-label { display: block; } .nav button.active { box-shadow: inset 0 2px var(--purple); } main { padding: 18px 16px 35px; } .topbar { margin-bottom: 27px; } .search { width: min(210px, 53vw); } .welcome { align-items: start; } .online { padding: 8px; font-size: 0; } .hero { min-height: 240px; padding: 25px 20px; } .hero-art { right: -15px; top: auto; bottom: -19px; width: 105px; height: 105px; font-size: 45px; opacity: .6; transform: rotate(9deg); } .hero-copy { max-width: 83%; } .hero h2 { font-size: 27px; } .hero p { font-size: 11px; } .section-head { align-items: start; flex-direction: column; } .game-art { font-size: 34px; } .game-info { padding: 10px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span class="brand-name">playroom</span></div>
+      <p class="section-label">Workspace</p>
+      <nav class="nav">
+        <button class="active" type="button" aria-current="page"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Home</span></button>
+        <button type="button" data-filter="All"><span class="nav-icon" aria-hidden="true">▦</span><span class="nav-label">Discover</span></button>
+        <button type="button" data-filter="Favorites"><span class="nav-icon" aria-hidden="true">♡</span><span class="nav-label">Favorites</span></button>
+        <button type="button" data-filter="Recently played"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">Recently played</span></button>
+      </nav>
+      <div class="side-spacer"></div>
+      <div class="invite"><strong>Bring your squad</strong><p>Good games get even better with friends.</p><button class="action" type="button" data-message="Invite link copied — send it to your squad!">＋ &nbsp; Invite friends</button></div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="crumb">Workspace &nbsp; / &nbsp; <span style="color:var(--text)">Home</span></div>
+        <div class="top-actions">
+          <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search games..." aria-label="Search games"></label>
+          <button class="icon-button action" type="button" aria-label="Notifications" data-message="You're all caught up.">♧</button>
+          <span class="avatar" aria-label="Player profile">JD</span>
+        </div>
+      </header>
+      <div class="content">
+        <section class="welcome"><div><div class="eyebrow">Your gaming space</div><h1>Ready when you are.</h1><p>Pick up where you left off, or find something new.</p></div><div class="online"><span class="online-dot"></span> You're online</div></section>
+        <section class="hero" aria-labelledby="featured-title">
+          <div class="hero-copy"><span class="hero-tag">✦ &nbsp; Featured this week</span><h2 id="featured-title">Find your next<br>great adventure.</h2><p>Fresh worlds, fast matches, and good times are just a click away.</p><button class="primary action" type="button" data-message="Opening the featured collection…">Explore games <span aria-hidden="true">→</span></button></div>
+          <div class="hero-art" aria-hidden="true">🎮</div>
+        </section>
+        <section aria-labelledby="games-title">
+          <div class="section-head"><h2 id="games-title">Your games</h2><div class="filters" role="group" aria-label="Filter games"><button class="filter active" type="button" data-category="All">All games</button><button class="filter" type="button" data-category="Action">Action</button><button class="filter" type="button" data-category="Adventure">Adventure</button><button class="filter" type="button" data-category="Racing">Racing</button></div></div>
+          <div class="games" id="games">
+            <article class="game-card" data-name="Neon Drift" data-category="Action"><div class="game-art art-cyber" aria-hidden="true"><span>🌆</span></div><div class="game-info"><div><h3>Neon Drift</h3><p>Action · Played yesterday</p></div><button class="play-small action" type="button" aria-label="Play Neon Drift" data-message="Launching Neon Drift…">▶</button></div></article>
+            <article class="game-card" data-name="Velocity Rush" data-category="Racing"><div class="game-art art-racing" aria-hidden="true"><span>🏎️</span></div><div class="game-info"><div><h3>Velocity Rush</h3><p>Racing · 2 hours played</p></div><button class="play-small action" type="button" aria-label="Play Velocity Rush" data-message="Launching Velocity Rush…">▶</button></div></article>
+            <article class="game-card" data-name="Wildwood" data-category="Adventure"><div class="game-art art-forest" aria-hidden="true"><span>🌿</span></div><div class="game-info"><div><h3>Wildwood</h3><p>Adventure · New quest</p></div><button class="play-small action" type="button" aria-label="Play Wildwood" data-message="Launching Wildwood…">▶</button></div></article>
+            <article class="game-card" data-name="Orbit Unknown" data-category="Action"><div class="game-art art-space" aria-hidden="true"><span>🪐</span></div><div class="game-info"><div><h3>Orbit Unknown</h3><p>Action · 4 friends online</p></div><button class="play-small action" type="button" aria-label="Play Orbit Unknown" data-message="Launching Orbit Unknown…">▶</button></div></article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    // Copyright 2026 himudx0-prog
+    // Licensed under the Apache License, Version 2.0 (the "License").
+    const cards = [...document.querySelectorAll('.game-card')];
+    const search = document.querySelector('#search');
+    const toast = document.querySelector('#toast');
+    let category = 'All';
+    let toastTimer;
+
+    function updateGames() {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      for (const card of cards) {
+        const matches = (category === 'All' || card.dataset.category === category) && card.dataset.name.toLowerCase().includes(query);
+        card.hidden = !matches;
+        if (matches) visible++;
+      }
+      let empty = document.querySelector('.empty');
+      if (!visible && !empty) {
+        empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No games found. Try another search or category.';
+        document.querySelector('#games').append(empty);
+      } else if (visible && empty) empty.remove();
+    }
+
+    search.addEventListener('input', updateGames);
+    document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => {
+      document.querySelector('.filter.active')?.classList.remove('active');
+      button.classList.add('active');
+      category = button.dataset.category;
+      updateGames();
+    }));
+    document.querySelectorAll('.nav button[data-filter]').forEach(button => button.addEventListener('click', () => {
+      document.querySelector('.nav button.active')?.classList.remove('active');
+      button.classList.add('active');
+      if (button.dataset.filter === 'All') {
+        category = 'All';
+        document.querySelector('.filter.active')?.classList.remove('active');
+        document.querySelector('.filter[data-category="All"]').classList.add('active');
+      } else if (button.dataset.filter === 'Favorites') {
+        category = 'Adventure';
+        document.querySelector('.filter.active')?.classList.remove('active');
+        document.querySelector('.filter[data-category="Adventure"]').classList.add('active');
+      } else {
+        category = 'All';
+        search.value = 'Neon';
+        document.querySelector('.filter.active')?.classList.remove('active');
+        document.querySelector('.filter[data-category="All"]').classList.add('active');
+      }
+      updateGames();
+    }));
+    document.querySelectorAll('.action').forEach(button => button.addEventListener('click', () => {
+      toast.textContent = button.dataset.message;
+      toast.classList.add('show');
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2400);
+    }));
+  </script>
+</body>
+</html>
